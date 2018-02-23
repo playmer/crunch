@@ -3133,7 +3133,7 @@ class crn_unpacker {
       return false;
 
     static_huffman_data_model dm[2];
-    for (uint32 i = 0; i < (has_etc_color_blocks ? 1 : 2); i++)
+    for (uint32 i = 0; i < (has_etc_color_blocks ? 1u : 2u); i++)
       if (!m_codec.decode_receive_static_data_model(dm[i]))
         return false;
 
@@ -3230,9 +3230,9 @@ class crn_unpacker {
         s0_linear ^= m_codec.decode(dm) << j;
       for (uint32 j = 0; j < 24; s1 |= dxt5_from_linear[s1_linear >> j & 0x3F] << j, j += 6)
         s1_linear ^= m_codec.decode(dm) << j;
-      m_alpha_selectors[i++] = s0;
-      m_alpha_selectors[i++] = s0 >> 16 | s1 << 8;
-      m_alpha_selectors[i++] = s1 >> 8;
+      m_alpha_selectors[i++] = static_cast<uint16>(s0);
+      m_alpha_selectors[i++] = static_cast<uint16>(s0 >> 16 | s1 << 8);
+      m_alpha_selectors[i++] = static_cast<uint16>(s1 >> 8);
     }
     m_codec.stop_decoding();
     return true;
@@ -3251,13 +3251,13 @@ class crn_unpacker {
         uint8 s = s_group & 7;
         if (s <= 3)
           s = 3 - s;
-        uint8 d = 3 * (p + 1);
+        uint8 d = static_cast<uint8>(3 * (p + 1));
         uint8 byte_offset = d >> 3;
         uint8 bit_offset = d & 7;
         data[byte_offset] |= s << (8 - bit_offset);
         if (bit_offset < 3)
           data[byte_offset - 1] |= s >> bit_offset;
-        d += 9 * ((p & 3) - (p >> 2));
+        d += static_cast<uint8>(9 * ((p & 3) - (p >> 2)));
         byte_offset = d >> 3;
         bit_offset = d & 7;
         data[byte_offset + 6] |= s << (8 - bit_offset);
@@ -3314,11 +3314,11 @@ class crn_unpacker {
         for (uint32 x = 0; x < width; x++, pData += 2) {
           visible = visible && x < output_width;
           if (!(y & 1) && !(x & 1))
-            reference_group = m_codec.decode(m_reference_encoding_dm);
+            reference_group = static_cast<uint8>(m_codec.decode(m_reference_encoding_dm));
           block_buffer_element &buffer = m_block_buffer[x];
           uint8 endpoint_reference;
           if (y & 1) {
-            endpoint_reference = buffer.endpoint_reference;
+            endpoint_reference = static_cast<uint8>(buffer.endpoint_reference);
           } else {
             endpoint_reference = reference_group & 3;
             reference_group >>= 2;
@@ -3329,9 +3329,9 @@ class crn_unpacker {
             color_endpoint_index += m_codec.decode(m_endpoint_delta_dm[0]);
             if (color_endpoint_index >= num_color_endpoints)
               color_endpoint_index -= num_color_endpoints;
-            buffer.color_endpoint_index = color_endpoint_index;
+            buffer.color_endpoint_index = static_cast<uint16>(color_endpoint_index);
           } else if (endpoint_reference == 1) {
-            buffer.color_endpoint_index = color_endpoint_index;
+            buffer.color_endpoint_index = static_cast<uint16>(color_endpoint_index);
           } else {
             color_endpoint_index = buffer.color_endpoint_index;
           }
@@ -3367,11 +3367,11 @@ class crn_unpacker {
         for (uint32 x = 0; x < width; x++, pData += 4) {
           visible = visible && x < output_width;
           if (!(y & 1) && !(x & 1))
-            reference_group = m_codec.decode(m_reference_encoding_dm);
+            reference_group = static_cast<uint8>(m_codec.decode(m_reference_encoding_dm));
           block_buffer_element &buffer = m_block_buffer[x];
           uint8 endpoint_reference;
           if (y & 1) {
-            endpoint_reference = buffer.endpoint_reference;
+            endpoint_reference = static_cast<uint8>(buffer.endpoint_reference);
           } else {
             endpoint_reference = reference_group & 3;
             reference_group >>= 2;
@@ -3382,14 +3382,14 @@ class crn_unpacker {
             color_endpoint_index += m_codec.decode(m_endpoint_delta_dm[0]);
             if (color_endpoint_index >= num_color_endpoints)
               color_endpoint_index -= num_color_endpoints;
-            buffer.color_endpoint_index = color_endpoint_index;
+            buffer.color_endpoint_index = static_cast<uint16>(color_endpoint_index);
             alpha0_endpoint_index += m_codec.decode(m_endpoint_delta_dm[1]);
             if (alpha0_endpoint_index >= num_alpha_endpoints)
               alpha0_endpoint_index -= num_alpha_endpoints;
-            buffer.alpha0_endpoint_index = alpha0_endpoint_index;
+            buffer.alpha0_endpoint_index = static_cast<uint16>(alpha0_endpoint_index);
           } else if (endpoint_reference == 1) {
-            buffer.color_endpoint_index = color_endpoint_index;
-            buffer.alpha0_endpoint_index = alpha0_endpoint_index;
+            buffer.color_endpoint_index = static_cast<uint16>(color_endpoint_index);
+            buffer.alpha0_endpoint_index = static_cast<uint16>(alpha0_endpoint_index);
           } else {
             color_endpoint_index = buffer.color_endpoint_index;
             alpha0_endpoint_index = buffer.alpha0_endpoint_index;
@@ -3429,11 +3429,11 @@ class crn_unpacker {
         for (uint32 x = 0; x < width; x++, pData += 4) {
           visible = visible && x < output_width;
           if (!(y & 1) && !(x & 1))
-            reference_group = m_codec.decode(m_reference_encoding_dm);
+            reference_group = static_cast<uint8>(m_codec.decode(m_reference_encoding_dm));
           block_buffer_element &buffer = m_block_buffer[x];
           uint8 endpoint_reference;
           if (y & 1) {
-            endpoint_reference = buffer.endpoint_reference;
+            endpoint_reference = static_cast<uint8>(buffer.endpoint_reference);
           } else {
             endpoint_reference = reference_group & 3;
             reference_group >>= 2;
@@ -3444,14 +3444,14 @@ class crn_unpacker {
             alpha0_endpoint_index += m_codec.decode(m_endpoint_delta_dm[1]);
             if (alpha0_endpoint_index >= num_alpha_endpoints)
               alpha0_endpoint_index -= num_alpha_endpoints;
-            buffer.alpha0_endpoint_index = alpha0_endpoint_index;
+            buffer.alpha0_endpoint_index = static_cast<uint16>(alpha0_endpoint_index);
             alpha1_endpoint_index += m_codec.decode(m_endpoint_delta_dm[1]);
             if (alpha1_endpoint_index >= num_alpha_endpoints)
               alpha1_endpoint_index -= num_alpha_endpoints;
-            buffer.alpha1_endpoint_index = alpha1_endpoint_index;
+            buffer.alpha1_endpoint_index = static_cast<uint16>(alpha1_endpoint_index);
           } else if (endpoint_reference == 1) {
-            buffer.alpha0_endpoint_index = alpha0_endpoint_index;
-            buffer.alpha1_endpoint_index = alpha1_endpoint_index;
+            buffer.alpha0_endpoint_index = static_cast<uint16>(alpha0_endpoint_index);
+            buffer.alpha1_endpoint_index = static_cast<uint16>(alpha1_endpoint_index);
           } else {
             alpha0_endpoint_index = buffer.alpha0_endpoint_index;
             alpha1_endpoint_index = buffer.alpha1_endpoint_index;
@@ -3491,11 +3491,11 @@ class crn_unpacker {
         for (uint32 x = 0; x < width; x++, pData += 2) {
           visible = visible && x < output_width;
           if (!(y & 1) && !(x & 1))
-            reference_group = m_codec.decode(m_reference_encoding_dm);
+            reference_group = static_cast<uint8>(m_codec.decode(m_reference_encoding_dm));
           block_buffer_element &buffer = m_block_buffer[x];
           uint8 endpoint_reference;
           if (y & 1) {
-            endpoint_reference = buffer.endpoint_reference;
+            endpoint_reference = static_cast<uint8>(buffer.endpoint_reference);
           } else {
             endpoint_reference = reference_group & 3;
             reference_group >>= 2;
@@ -3506,9 +3506,9 @@ class crn_unpacker {
             alpha0_endpoint_index += m_codec.decode(m_endpoint_delta_dm[1]);
             if (alpha0_endpoint_index >= num_alpha_endpoints)
               alpha0_endpoint_index -= num_alpha_endpoints;
-            buffer.alpha0_endpoint_index = alpha0_endpoint_index;
+            buffer.alpha0_endpoint_index = static_cast<uint16>(alpha0_endpoint_index);
           } else if (endpoint_reference == 1) {
-            buffer.alpha0_endpoint_index = alpha0_endpoint_index;
+            buffer.alpha0_endpoint_index = static_cast<uint16>(alpha0_endpoint_index);
           } else {
             alpha0_endpoint_index = buffer.alpha0_endpoint_index;
           }
@@ -3545,9 +3545,9 @@ class crn_unpacker {
           block_buffer_element &buffer = m_block_buffer[x << 1];
           uint8 endpoint_reference, block_endpoint[4], e0[4], e1[4];
           if (y & 1) {
-            endpoint_reference = buffer.endpoint_reference;
+            endpoint_reference = static_cast<uint8>(buffer.endpoint_reference);
           } else {
-            reference_group = m_codec.decode(m_reference_encoding_dm);
+            reference_group = static_cast<uint8>(m_codec.decode(m_reference_encoding_dm));
             endpoint_reference = (reference_group & 3) | (reference_group >> 2 & 12);
             buffer.endpoint_reference = (reference_group >> 2 & 3) | (reference_group >> 4 & 12);
           }
@@ -3555,11 +3555,12 @@ class crn_unpacker {
             color_endpoint_index += m_codec.decode(m_endpoint_delta_dm[0]);
             if (color_endpoint_index >= num_color_endpoints)
               color_endpoint_index -= num_color_endpoints;
-            buffer.color_endpoint_index = color_endpoint_index;
+            buffer.color_endpoint_index = static_cast<uint16>(color_endpoint_index);
           } else if ((endpoint_reference & 3) == 1) {
-            buffer.color_endpoint_index = color_endpoint_index;
+            buffer.color_endpoint_index = static_cast<uint16>(color_endpoint_index);
           } else if ((endpoint_reference & 3) == 3) {
-            buffer.color_endpoint_index = color_endpoint_index = diagonal_color_endpoint_index;
+            color_endpoint_index = diagonal_color_endpoint_index;
+            buffer.color_endpoint_index = static_cast<uint16>(color_endpoint_index);
           } else {
             color_endpoint_index = buffer.color_endpoint_index;
           }
@@ -3571,8 +3572,8 @@ class crn_unpacker {
             if (color_endpoint_index >= num_color_endpoints)
               color_endpoint_index -= num_color_endpoints;
           }
-          diagonal_color_endpoint_index = m_block_buffer[x << 1 | 1].color_endpoint_index;
-          m_block_buffer[x << 1 | 1].color_endpoint_index = color_endpoint_index;
+          diagonal_color_endpoint_index = static_cast<uint16>(m_block_buffer[x << 1 | 1].color_endpoint_index);
+          m_block_buffer[x << 1 | 1].color_endpoint_index = static_cast<uint16>(color_endpoint_index);
           *(uint32*)&e1 = m_color_endpoints[color_endpoint_index];
           if (visible) {
             uint32 flip = endpoint_reference >> 1 ^ 1, diff = 1;
@@ -3580,7 +3581,7 @@ class crn_unpacker {
               diff = e0[c] + 3 >= e1[c] && e1[c] + 4 >= e0[c] ? diff : 0;
             for (uint c = 0; c < 3; c++)
               block_endpoint[c] = diff ? e0[c] << 3 | ((e1[c] - e0[c]) & 7) : (e0[c] << 3 & 0xF0) | e1[c] >> 1;
-            block_endpoint[3] = e0[3] << 5 | e1[3] << 2 | diff << 1 | flip;
+            block_endpoint[3] = static_cast<uint8>(e0[3] << 5 | e1[3] << 2 | diff << 1 | flip);
             pData[0] = *(uint32*)&block_endpoint;
             pData[1] = m_color_selectors[selector_index << 1 | flip];
           }
@@ -3612,9 +3613,9 @@ class crn_unpacker {
           block_buffer_element &buffer = m_block_buffer[x << 1];
           uint8 endpoint_reference, block_endpoint[4], e0[4], e1[4];
           if (y & 1) {
-            endpoint_reference = buffer.endpoint_reference;
+            endpoint_reference = static_cast<uint8>(buffer.endpoint_reference);
           } else {
-            reference_group = m_codec.decode(m_reference_encoding_dm);
+            reference_group = static_cast<uint8>(m_codec.decode(m_reference_encoding_dm));
             endpoint_reference = (reference_group & 3) | (reference_group >> 2 & 12);
             buffer.endpoint_reference = (reference_group >> 2 & 3) | (reference_group >> 4 & 12);
           }
@@ -3624,15 +3625,18 @@ class crn_unpacker {
               color_endpoint_index -= num_color_endpoints;
             alpha0_endpoint_index += m_codec.decode(m_endpoint_delta_dm[1]);
             if (alpha0_endpoint_index >= num_alpha_endpoints)
-              alpha0_endpoint_index -= num_alpha_endpoints;
-            buffer.color_endpoint_index = color_endpoint_index;
-            buffer.alpha0_endpoint_index = alpha0_endpoint_index;
+              alpha0_endpoint_index -= static_cast<uint16>(num_alpha_endpoints);
+            buffer.color_endpoint_index = static_cast<uint16>(color_endpoint_index);
+            buffer.alpha0_endpoint_index = static_cast<uint16>(alpha0_endpoint_index);
           } else if ((endpoint_reference & 3) == 1) {
-            buffer.color_endpoint_index = color_endpoint_index;
-            buffer.alpha0_endpoint_index = alpha0_endpoint_index;
+            buffer.color_endpoint_index = static_cast<uint16>(color_endpoint_index);
+            buffer.alpha0_endpoint_index = static_cast<uint16>(alpha0_endpoint_index);
           } else if ((endpoint_reference & 3) == 3) {
-            buffer.color_endpoint_index = color_endpoint_index = diagonal_color_endpoint_index;
-            buffer.alpha0_endpoint_index = alpha0_endpoint_index = diagonal_alpha0_endpoint_index;
+            color_endpoint_index = diagonal_color_endpoint_index;
+            buffer.color_endpoint_index = static_cast<uint16>(color_endpoint_index);
+
+            alpha0_endpoint_index = diagonal_alpha0_endpoint_index;
+            buffer.alpha0_endpoint_index = static_cast<uint16>(alpha0_endpoint_index);
           } else {
             color_endpoint_index = buffer.color_endpoint_index;
             alpha0_endpoint_index = buffer.alpha0_endpoint_index;
@@ -3649,15 +3653,15 @@ class crn_unpacker {
           *(uint32*)&e1 = m_color_endpoints[color_endpoint_index];
           diagonal_color_endpoint_index = m_block_buffer[x << 1 | 1].color_endpoint_index;
           diagonal_alpha0_endpoint_index = m_block_buffer[x << 1 | 1].alpha0_endpoint_index;
-          m_block_buffer[x << 1 | 1].color_endpoint_index = color_endpoint_index;
-          m_block_buffer[x << 1 | 1].alpha0_endpoint_index = alpha0_endpoint_index;
+          m_block_buffer[x << 1 | 1].color_endpoint_index = static_cast<uint16>(color_endpoint_index);
+          m_block_buffer[x << 1 | 1].alpha0_endpoint_index = static_cast<uint16>(alpha0_endpoint_index);
           if (visible) {
             uint32 flip = endpoint_reference >> 1 ^ 1, diff = 1;
             for (uint c = 0; diff && c < 3; c++)
               diff = e0[c] + 3 >= e1[c] && e1[c] + 4 >= e0[c] ? diff : 0;
             for (uint c = 0; c < 3; c++)
               block_endpoint[c] = diff ? e0[c] << 3 | ((e1[c] - e0[c]) & 7) : (e0[c] << 3 & 0xF0) | e1[c] >> 1;
-            block_endpoint[3] = e0[3] << 5 | e1[3] << 2 | diff << 1 | flip;
+            block_endpoint[3] = static_cast<uint8>(e0[3] << 5 | e1[3] << 2 | diff << 1 | flip);
             const uint16* pAlpha0_selectors = &m_alpha_selectors[alpha0_selector_index * 6 + (flip ? 3 : 0)];
             pData[0] = m_alpha_endpoints[alpha0_endpoint_index] | pAlpha0_selectors[0] << 16;
             pData[1] = pAlpha0_selectors[1] | pAlpha0_selectors[2] << 16;

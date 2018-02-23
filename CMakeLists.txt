@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.1)
 
+set(CRUNCH_DIR ${CMAKE_CURRENT_LIST_DIR})
 set(CRUNCH_PROJECT_NAME crunch)
 set(CRUNCH_LIBRARY_NAME crn)
 set(CRUNCH_EXE_NAME crunch)
@@ -15,5 +16,5 @@ if (BUILD_EXAMPLES)
 	add_subdirectory(example3)
 endif(BUILD_EXAMPLES)
 
-add_subdirectory(crunch)
 add_subdirectory(crnlib)
+add_subdirectory(crunch)

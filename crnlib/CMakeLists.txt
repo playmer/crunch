@@ -1,10 +1,6 @@
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-include_directories(
-  ${CMAKE_SOURCE_DIR}/inc
-)
-
 # Defines the source code for the library
 set(CRNLIB_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/crn_arealist.cpp
@@ -183,19 +179,22 @@ set(CRNLIB_SRCS
 )
 
 if(WIN32)
-set(CRNLIB_THREAD_SRCS
-	${CMAKE_CURRENT_SOURCE_DIR}/crn_threading_win32.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/crn_threading_win32.h
-)
+	set(CRNLIB_THREAD_SRCS
+		${CMAKE_CURRENT_SOURCE_DIR}/crn_threading_win32.cpp
+		${CMAKE_CURRENT_SOURCE_DIR}/crn_threading_win32.h
+	)
 else(WIN32)
-set(CRNLIB_THREAD_SRCS
-	${CMAKE_CURRENT_SOURCE_DIR}/crn_threading_pthreads.h
-	${CMAKE_CURRENT_SOURCE_DIR}/crn_threading_pthreads.cpp
-)
+	set(CRNLIB_THREAD_SRCS
+		${CMAKE_CURRENT_SOURCE_DIR}/crn_threading_pthreads.h
+		${CMAKE_CURRENT_SOURCE_DIR}/crn_threading_pthreads.cpp
+	)
 endif()
 
 if (BUILD_SHARED_LIBS) 
-add_library(${CRUNCH_LIBRARY_NAME} SHARED ${CRNLIB_SRCS} ${CRNLIB_THREAD_SRCS})
+	add_library(${CRUNCH_LIBRARY_NAME} SHARED ${CRNLIB_SRCS} ${CRNLIB_THREAD_SRCS})
 else()
-add_library(${CRUNCH_LIBRARY_NAME} STATIC ${CRNLIB_SRCS} ${CRNLIB_THREAD_SRCS})
+	add_library(${CRUNCH_LIBRARY_NAME} STATIC ${CRNLIB_SRCS} ${CRNLIB_THREAD_SRCS})
 endif()
+
+target_include_directories(${CRUNCH_LIBRARY_NAME} PUBLIC ${CRUNCH_DIR}/inc
+														 ${CRUNCH_DIR}/crnlib)

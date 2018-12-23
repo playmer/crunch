@@ -17,6 +17,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <cstring>
 #ifdef WIN32
 #include <memory.h>
 #else
